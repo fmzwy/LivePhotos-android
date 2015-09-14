@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="lime_colorPrimary">#CDDC39</color>
+    <color name="lime_colorPrimaryDark">#AFB42B</color>
+    <color name="lime_alpha_colorPrimaryDark">#80AFB42B</color>
+</resources>
