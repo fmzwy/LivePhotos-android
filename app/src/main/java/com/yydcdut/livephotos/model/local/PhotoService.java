@@ -70,13 +70,13 @@ public class PhotoService extends Service {
                 if (progress != null && !progress.isProgressOver()) {
                     Log.i("yuyidong", "PhotoService   in");
                     mIsCurrentProgressFinished = false;
-                    List<SandPhoto> sandPhotoList = SandBoxDB.getInstance().findByTime(progress.timeAdd());
+                    List<SandPhoto> sandPhotoList = SandBoxDB.getInstance().find(progress.timeAdd());
                     Log.i("yuyidong", "PhotoService   sandPhotoList---->" + sandPhotoList.size());
 //                    //todo 数据还没有存入数据库，但是作图这边就已经从数据库中读这个时间段的数据了
                     if (sandPhotoList == null || sandPhotoList.size() == 0) {
                         wait4Data(progress);
                     }
-                    sandPhotoList = SandBoxDB.getInstance().findByTime(progress.getTime());
+                    sandPhotoList = SandBoxDB.getInstance().find(progress.getTime());
                     for (SandPhoto sandPhoto : sandPhotoList) {
                         makePhoto(sandPhoto, progress.getDir());
                     }
@@ -101,7 +101,7 @@ public class PhotoService extends Service {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                List<SandPhoto> sandPhotoList = SandBoxDB.getInstance().findByTime(progress.getTime());
+                List<SandPhoto> sandPhotoList = SandBoxDB.getInstance().find(progress.getTime());
                 if (sandPhotoList.size() != 0) {
                     break;
                 }

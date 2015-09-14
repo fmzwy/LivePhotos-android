@@ -20,6 +20,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".controller.GalleryActivity"
+            android:screenOrientation="portrait"/>
+
+        <service android:name=".model.cache.CacheService"/>
         <service android:name=".model.local.CameraService"/>
         <service
             android:name=".model.local.PhotoService"

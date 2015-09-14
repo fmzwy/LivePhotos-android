@@ -15,7 +15,7 @@ public class SandBoxSQLiteTest extends InstrumentationTestCase {
 
     public void testEasyCamera() {
         SandPhoto sandPhoto = new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, System.currentTimeMillis());
-        long id = SandBoxDB.getInstance().save(sandPhoto);
+        long id = SandBoxDB.getInstance().save(sandPhoto, 1);
         Log.i("yuyidong", "id---->" + id);
         List<SandPhoto> sandPhotoList = SandBoxDB.getInstance().findAll();
         for (SandPhoto sandPhoto1 : sandPhotoList) {
@@ -26,14 +26,14 @@ public class SandBoxSQLiteTest extends InstrumentationTestCase {
     }
 
     public void testEasyCameraFindByTime() {
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 1000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 2000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 3000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 4000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 5000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 6000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 7000l)));
-        List<SandPhoto> sandPhotoList = SandBoxDB.getInstance().findByTime(5000l);
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 1000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 2000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 3000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 4000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 5000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 6000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 7000l), 1));
+        List<SandPhoto> sandPhotoList = SandBoxDB.getInstance().find(5000l);
         for (SandPhoto sandPhoto1 : sandPhotoList) {
 
         }
@@ -44,15 +44,6 @@ public class SandBoxSQLiteTest extends InstrumentationTestCase {
     }
 
     public void testDeleteByTime() {
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 1000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 2000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 3000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 4000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 5000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 6000l)));
-        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 7000l)));
-        Log.i("yuyidong", "rows--->" + SandBoxDB.getInstance().deleteByTime(3000l, 3l));
-
     }
 
 }

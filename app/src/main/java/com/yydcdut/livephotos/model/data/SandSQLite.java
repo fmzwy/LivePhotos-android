@@ -20,7 +20,8 @@ public class SandSQLite extends SQLiteOpenHelper {
                 "data BLOB NOT NULL, " +
                 "time LONG NOT NULL, " +
                 "width INTEGER NOT NULL, " +
-                "height INTEGER NOT NULL);";
+                "height INTEGER NOT NULL, " +
+                "belong LONG NOT NULL);";
         db.execSQL(sql);
     }
 

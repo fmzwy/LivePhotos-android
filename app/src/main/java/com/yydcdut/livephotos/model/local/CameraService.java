@@ -12,7 +12,6 @@ import android.util.Log;
 
 import com.yydcdut.livephotos.IMake;
 import com.yydcdut.livephotos.model.ICameraBinder;
-import com.yydcdut.livephotos.model.SandBoxDB;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
 
 import java.util.LinkedList;
@@ -63,15 +62,21 @@ public class CameraService extends Service {
     }
 
     private void savePhoto(SandPhoto sandPhoto) {
-        SandBoxDB.getInstance().save(sandPhoto);
-        SandBoxDB.getInstance().deleteByTime(sandPhoto.time - 3300, sandPhoto.time - 3000);
+//        SandBoxDB.getInstance().save(sandPhoto);
+//        SandBoxDB.getInstance().deleteByTime(sandPhoto.time - 3300, sandPhoto.time - 3000);
     }
 
+    private int mPreviewWidth;
+    private int mPreviewHeight;
 
     public class CameraBinder extends Binder implements ICameraBinder {
+
         @Override
-        public void add(byte[] data, int width, int height, long time) {
-            SandPhoto sandPhoto = new SandPhoto(-1, data, width, height, time);
+        public void add(byte[] data, long time) {
+            if (mPreviewWidth == 0 || mPreviewHeight == 0) {
+                throw new IllegalArgumentException("应该先执行 init()");
+            }
+            SandPhoto sandPhoto = new SandPhoto(-1, data, mPreviewWidth, mPreviewHeight, time);
             mSaveQueue.offer(sandPhoto);
             synchronized (mSaveObject) {
                 mSaveObject.notifyAll();
@@ -89,7 +94,9 @@ public class CameraService extends Service {
         }
 
         @Override
-        public void setFrameDelta(long delta) {
+        public void init(long delta, int width, int height) {
+            mPreviewWidth = width;
+            mPreviewHeight = height;
 
         }
     }

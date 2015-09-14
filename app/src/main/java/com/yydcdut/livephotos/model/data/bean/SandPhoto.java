@@ -5,7 +5,8 @@ import java.util.Arrays;
 /**
  * Created by yuyidong on 15/9/10.
  */
-public class SandPhoto implements ITimer {
+public class SandPhoto {
+    public static final int ID_NONE = -1;
     private long id;
     final public byte[] data;
     final public int width;
@@ -24,6 +25,10 @@ public class SandPhoto implements ITimer {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "SandPhoto{" +
@@ -35,8 +40,4 @@ public class SandPhoto implements ITimer {
                 '}';
     }
 
-    @Override
-    public long getTime() {
-        return time;
-    }
 }

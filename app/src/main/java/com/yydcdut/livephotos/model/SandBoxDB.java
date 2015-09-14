@@ -60,14 +60,12 @@ public class SandBoxDB {
      *
      * @return
      */
-    public List<SandPhoto> findByTime(long needTime) {
-        long firstTime = needTime - 2000;
-        long lastTime = needTime + 2000;
+    public List<SandPhoto> find(long belong) {
         List<SandPhoto> sandPhotoList = new ArrayList<>();
         SQLiteDatabase db = mSandSQLite.getReadableDatabase();
         Cursor cursor = db.query(SandSQLite.TABLE, null,
-                "time >= ?  AND time <= ? ",
-                new String[]{firstTime + "", lastTime + ""},
+                "belong = ? ",
+                new String[]{belong + ""},
                 null, null,
                 "time asc");
         while (cursor.moveToNext()) {
@@ -90,13 +88,14 @@ public class SandBoxDB {
      * @param sandPhoto
      * @return
      */
-    public long save(SandPhoto sandPhoto) {
+    public long save(SandPhoto sandPhoto, long belong) {
         SQLiteDatabase db = mSandSQLite.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("data", sandPhoto.data);
         contentValues.put("time", sandPhoto.time);
         contentValues.put("width", sandPhoto.width);
         contentValues.put("height", sandPhoto.height);
+        contentValues.put("belong", belong);
         long id = db.insert(SandSQLite.TABLE, null, contentValues);
         db.close();
         return id;
@@ -127,10 +126,4 @@ public class SandBoxDB {
         return rows;
     }
 
-    public int deleteByTime(long small, long big) {
-        SQLiteDatabase db = mSandSQLite.getWritableDatabase();
-        int rows = db.delete(SandSQLite.TABLE, "time < ? AND time > ?", new String[]{big + "", small + ""});
-        db.close();
-        return rows;
-    }
 }
