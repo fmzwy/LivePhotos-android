@@ -29,6 +29,9 @@
         <service
             android:name=".model.local.PhotoService"
             android:process=":make"/>
+        <service
+            android:name=".model.YuvService"
+            android:process=":yuv"/>
     </application>
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>

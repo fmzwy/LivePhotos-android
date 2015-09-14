@@ -1,13 +1,19 @@
 package com.yydcdut.livephotos.model.cache;
 
 import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Binder;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
+import com.yydcdut.livephotos.IMake;
 import com.yydcdut.livephotos.model.ICameraBinder;
 import com.yydcdut.livephotos.model.SandBoxDB;
+import com.yydcdut.livephotos.model.YuvService;
 import com.yydcdut.livephotos.model.cache.structure.CacheQueue;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
 
@@ -21,8 +27,12 @@ public class CacheService extends Service implements CacheQueue.OnDataCacheFinis
     private int mPreviewWidth;
     private int mPreviewHeight;
 
+    private IMake mYuvService;
+    private boolean mIsBind = false;
+
     @Override
     public IBinder onBind(Intent intent) {
+        bindService(getApplicationContext());
         return new CameraBinder();
     }
 
@@ -64,8 +74,46 @@ public class CacheService extends Service implements CacheQueue.OnDataCacheFinis
                     long id = SandBoxDB.getInstance().save(sandPhoto, belong);
                     Log.i("yuyidong", "onFinish  id--->" + id);
                 }
+                try {
+                    mYuvService.make(belong);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        unBindService(getApplicationContext());
+        return super.onUnbind(intent);
+    }
+
+    private void bindService(Context context) {
+        Intent intent = new Intent(context, YuvService.class);
+        context.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mYuvService = IMake.Stub.asInterface(service);
+            mIsBind = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mYuvService = null;
+            mIsBind = false;
+        }
+    };
+
+    private void unBindService(Context context) {
+        if (mIsBind) {
+            context.unbindService(mServiceConnection);
+            mIsBind = false;
+        }
     }
 
 }
