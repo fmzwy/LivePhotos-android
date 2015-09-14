@@ -6,7 +6,7 @@ package com.yydcdut.livephotos.model;
 public interface ICameraBinder {
     void add(byte[] data, long time);
 
-    void capture(long time);
+    void capture(long belong);
 
     void init(long delta, int width, int height);
 }

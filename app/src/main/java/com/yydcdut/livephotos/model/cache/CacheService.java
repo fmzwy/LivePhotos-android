@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.yydcdut.livephotos.model.ICameraBinder;
 import com.yydcdut.livephotos.model.SandBoxDB;
@@ -36,8 +37,8 @@ public class CacheService extends Service implements CacheQueue.OnDataCacheFinis
         }
 
         @Override
-        public void capture(long time) {
-            mCacheQueue.wannaSaveData(time);
+        public void capture(long belong) {
+            mCacheQueue.wannaSaveData(belong);
         }
 
         @Override
@@ -60,7 +61,8 @@ public class CacheService extends Service implements CacheQueue.OnDataCacheFinis
             @Override
             public void run() {
                 for (SandPhoto sandPhoto : list) {
-                    SandBoxDB.getInstance().save(sandPhoto, belong);
+                    long id = SandBoxDB.getInstance().save(sandPhoto, belong);
+                    Log.i("yuyidong", "onFinish  id--->" + id);
                 }
             }
         }).start();

@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.view.View;
 
 import com.yydcdut.livephotos.R;
+import com.yydcdut.livephotos.model.GalleryDB;
 import com.yydcdut.livephotos.model.ICameraBinder;
 import com.yydcdut.livephotos.model.cache.CacheService;
 
@@ -26,6 +27,8 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         findViewById(R.id.fab_capture).setOnClickListener(this);
+        findViewById(R.id.btn_gallery).setOnClickListener(this);
+        findViewById(R.id.btn_setting).setOnClickListener(this);
         if (!mIsBind) {
             Intent intent = new Intent(this, CacheService.class);
             bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
@@ -83,9 +86,19 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
 
     @Override
     public void onClick(View v) {
-        if (mCameraBinder != null) {
-            mCameraBinder.capture(System.currentTimeMillis());
+        switch (v.getId()) {
+            case R.id.fab_capture:
+                if (mCameraBinder != null) {
+                    long belong = System.currentTimeMillis();
+                    mCameraBinder.capture(belong);
+                    GalleryDB.getInstance().save(belong);
+                }
+                break;
+            case R.id.btn_gallery:
+                startActivity(new Intent(this, GalleryActivity.class));
+                break;
         }
+
     }
 
     @Override

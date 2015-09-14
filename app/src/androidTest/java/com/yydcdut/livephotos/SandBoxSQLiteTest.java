@@ -43,7 +43,17 @@ public class SandBoxSQLiteTest extends InstrumentationTestCase {
         Log.i("yuyidong", "rows--->" + SandBoxDB.getInstance().deleteAll());
     }
 
-    public void testDeleteByTime() {
+    public void testCenterBelong() {
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 1000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 2000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 3000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 4000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 5000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 6000l), 1));
+        Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 7000l), 1));
+        SandPhoto sandPhoto = SandBoxDB.getInstance().getCenterSandPhoto(1);
+        Log.i("yuyidong", "sandPhoto--->" + sandPhoto);
+
     }
 
 }

@@ -84,10 +84,10 @@ public class CameraService extends Service {
         }
 
         @Override
-        public void capture(long time) {
+        public void capture(long belong) {
             //todo 自己也保存一张图下来
             try {
-                mPhotoService.make(time);
+                mPhotoService.make(belong);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

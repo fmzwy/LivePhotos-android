@@ -1,7 +1,5 @@
 package com.yydcdut.livephotos.model.data.bean;
 
-import java.util.Arrays;
-
 /**
  * Created by yuyidong on 15/9/10.
  */
@@ -33,7 +31,7 @@ public class SandPhoto {
     public String toString() {
         return "SandPhoto{" +
                 "id=" + id +
-                ", data=" + Arrays.toString(data) +
+                ", data=" + "忽略" +
                 ", width=" + width +
                 ", height=" + height +
                 ", time=" + time +

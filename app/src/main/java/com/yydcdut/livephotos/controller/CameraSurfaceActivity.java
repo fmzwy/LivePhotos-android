@@ -1,19 +1,19 @@
 package com.yydcdut.livephotos.controller;
 
-import android.content.res.TypedArray;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.TypedValue;
 import android.view.SurfaceHolder;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 import com.yydcdut.livephotos.R;
 import com.yydcdut.livephotos.view.AutoFitSurfaceView;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -41,6 +41,14 @@ public abstract class CameraSurfaceActivity extends AppCompatActivity implements
             window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         setContentView(R.layout.activity_surface);
+        int height = 20;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            height = getStatusBarHeight();
+        }
+        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.layout_margin);
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) relativeLayout.getLayoutParams();
+        layoutParams.setMargins(0, height, 0, 0);
+        relativeLayout.setLayoutParams(layoutParams);
 
         mAutoFitSurfaceView = (AutoFitSurfaceView) findViewById(R.id.sv_auto);
         mAutoFitSurfaceView.getHolder().addCallback(this);
@@ -112,18 +120,25 @@ public abstract class CameraSurfaceActivity extends AppCompatActivity implements
     }
 
     /**
-     * 得到actionbar大小
+     * 得到StatusBar大小
      *
      * @return
      */
-    public int getActionBarSize() {
-        TypedValue typedValue = new TypedValue();
-        int[] textSizeAttr = new int[]{R.attr.actionBarSize};
-        int indexOfAttrTextSize = 0;
-        TypedArray a = obtainStyledAttributes(typedValue.data, textSizeAttr);
-        int actionBarSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
-        a.recycle();
-        return actionBarSize;
+    public int getStatusBarHeight() {
+        Class<?> c = null;
+        Object obj = null;
+        Field field = null;
+        int x = 0, sbar = 0;
+        try {
+            c = Class.forName("com.android.internal.R$dimen");
+            obj = c.newInstance();
+            field = c.getField("status_bar_height");
+            x = Integer.parseInt(field.get(obj).toString());
+            sbar = getResources().getDimensionPixelSize(x);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        return sbar;
     }
 
     abstract void startPreview(Camera.Size size, Camera camera);
