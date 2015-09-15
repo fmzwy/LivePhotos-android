@@ -71,6 +71,10 @@ public class CacheQueue<T> {
         return mCacheList.size() < mMaxQueueSize;
     }
 
+    public void clear() {
+        mCacheList.clear();
+    }
+
     private OnDataCacheFinishListener mOnDataCacheFinishListener;
 
     public interface OnDataCacheFinishListener<T> {

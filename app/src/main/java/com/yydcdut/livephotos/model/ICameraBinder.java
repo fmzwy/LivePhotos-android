@@ -9,4 +9,5 @@ public interface ICameraBinder {
     void capture(long belong);
 
     void init(long delta, int width, int height);
+
 }

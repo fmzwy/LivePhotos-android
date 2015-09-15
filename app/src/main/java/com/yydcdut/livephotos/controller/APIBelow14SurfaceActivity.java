@@ -95,6 +95,8 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
             case R.id.btn_gallery:
                 startActivity(new Intent(this, GalleryActivity.class));
                 break;
+            case R.id.btn_setting:
+                break;
         }
 
     }
@@ -107,6 +109,5 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
             mIsBind = false;
         }
     }
-
 
 }

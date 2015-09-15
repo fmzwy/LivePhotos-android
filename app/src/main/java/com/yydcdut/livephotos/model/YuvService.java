@@ -56,6 +56,7 @@ public class YuvService extends Service {
                     //todo oom
                     List<SandPhoto> sandPhotos = SandBoxDB.getInstance().find(belong);
                     for (SandPhoto sandPhoto : sandPhotos) {
+                        Log.i("yuyidong", "sandPhotos.size()------>" + sandPhotos.size());
                         makePhoto(sandPhoto, path);
                         if (sandPhoto.time == centerPhoto.time) {
                             doBlur(centerPhoto, path);
@@ -91,9 +92,12 @@ public class YuvService extends Service {
             bos = new BufferedOutputStream(new FileOutputStream(file));
             newBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bos);// 将图片压缩到流中
             bos.flush();// 输出
+            Log.i("yuyidong", "makePhoto   end--->" + sandPhoto.getId());
         } catch (FileNotFoundException e) {
+            Log.i("yuyidong", "makePhoto   FileNotFoundException--->" + sandPhoto.getId());
             e.printStackTrace();
         } catch (IOException e) {
+            Log.i("yuyidong", "makePhoto   IOException--->" + sandPhoto.getId());
             e.printStackTrace();
         } finally {
             if (byteArrayOutputStream != null) {
@@ -110,7 +114,6 @@ public class YuvService extends Service {
                     e.printStackTrace();
                 }
             }
-            Log.i("yuyidong", "makePhoto   end--->" + sandPhoto.getId());
         }
     }
 

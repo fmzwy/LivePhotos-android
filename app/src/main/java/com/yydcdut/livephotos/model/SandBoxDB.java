@@ -59,8 +59,7 @@ public class SandBoxDB extends BaseSQLite {
         Cursor cursor = db.query(PhotoSQLite.TABLE_SANDBOX, null,
                 "belong = ? ",
                 new String[]{belong + ""},
-                null, null,
-                "time asc");
+                null, null, null);
         List<SandPhoto> sandPhotoList = new ArrayList<>(cursor.getCount());
         while (cursor.moveToNext()) {
             long id = cursor.getLong(cursor.getColumnIndex("_id"));

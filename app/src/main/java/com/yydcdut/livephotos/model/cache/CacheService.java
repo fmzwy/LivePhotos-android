@@ -62,11 +62,14 @@ public class CacheService extends Service implements CacheQueue.OnDataCacheFinis
                 throw new IllegalArgumentException("每帧数据应该小于1s");
             }
             int frames = (int) (1000 / delta);
-            mCacheQueue = new CacheQueue<>(frames);
+            //前后3s，总共6s
+            mCacheQueue = new CacheQueue<>(frames * 3);
             mCacheQueue.setOnDataCacheFinishListener(CacheService.this);
             mPreviewWidth = width;
             mPreviewHeight = height;
+            Log.i("yuyidong", "init    delta--->" + delta + "    frames---->" + frames);
         }
+
     }
 
     @Override

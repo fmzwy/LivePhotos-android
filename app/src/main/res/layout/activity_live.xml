@@ -17,7 +17,7 @@
         android:scaleType="center"
         android:visibility="invisible"/>
 
-    <ImageView
+    <com.yydcdut.livephotos.view.LiveView
         android:id="@+id/img_live"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

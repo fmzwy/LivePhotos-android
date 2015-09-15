@@ -1,13 +1,9 @@
 package com.yydcdut.livephotos.controller;
 
-import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -19,25 +15,25 @@ import com.yydcdut.livephotos.R;
 import com.yydcdut.livephotos.model.SandBoxDB;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
 import com.yydcdut.livephotos.utils.FileManager;
+import com.yydcdut.livephotos.view.LiveView;
 
 import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by yuyidong on 15/9/14.
  */
 public class LivePhotoActivity extends AppCompatActivity implements View.OnTouchListener, Handler.Callback {
-    private Drawable[] mDrawables;
-    private AnimationDrawable mFrameAnim;
-
     private static final int STATE_DOWN = 1;
     private static final int STATE_UP = 2;
     private static final int STATE_OTHER = 3;
     private int mState = STATE_OTHER;
-    private Handler mStateHandler;
+    private Handler mHandler;
+    private static final int MSG_STATE = 1;
 
     private ImageView mCenterImage;
     private ImageView mBlurImage;
-    private ImageView mLiveImage;
+    private LiveView mLiveImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,15 +42,21 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
         Bundle bundle = getIntent().getExtras();
         long belong = bundle.getLong("belong");
         setContentView(R.layout.activity_live);
-        mStateHandler = new Handler(this);
+        mHandler = new Handler(this);
         mCenterImage = (ImageView) findViewById(R.id.img_center);
         mCenterImage.setOnTouchListener(this);
         mBlurImage = (ImageView) findViewById(R.id.img_blur);
-        mLiveImage = (ImageView) findViewById(R.id.img_live);
+        mLiveImage = (LiveView) findViewById(R.id.img_live);
         String dir = FileManager.getAppDir() + belong + File.separator;
         initCenter(dir, belong);
         initBlur(dir);
-        initLive(dir);
+        try {
+            initLive(dir);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initCenter(String dir, long belong) {
@@ -68,34 +70,24 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
         ImageLoader.getInstance().displayImage("file:" + File.separator + File.separator + path, mBlurImage);
     }
 
-    private void initLive(String dir) {
-        String[] fileNames = FileManager.getNames(dir);
-        mDrawables = new Drawable[fileNames.length];
-        Log.i("yuyidong", "fileNames.length--->" + fileNames.length);
-        mFrameAnim = new AnimationDrawable();
-        for (int i = 0; i < mDrawables.length; i++) {
-            String path = dir + fileNames[i];
-            mDrawables[i] = new BitmapDrawable(ImageLoader.getInstance().loadImageSync("file:" + File.separator + File.separator + path));
-            mFrameAnim.addFrame(mDrawables[i], 135);
-        }
-        mLiveImage.setBackgroundDrawable(mFrameAnim);
+    private void initLive(String dir) throws ExecutionException, InterruptedException {
+        mLiveImage.init(dir);
     }
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Log.i("yuyidong", "ACTION_DOWN");
                 mState = STATE_DOWN;
-                if (!mStateHandler.hasMessages(1)) {
-                    mStateHandler.sendEmptyMessageDelayed(1, 1000);
+                if (!mHandler.hasMessages(MSG_STATE)) {
+                    mHandler.sendEmptyMessageDelayed(MSG_STATE, 1000);
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                Log.i("yuyidong", "ACTION_UP");
                 mState = STATE_UP;
-                mStateHandler.removeMessages(1);
+                mHandler.removeMessages(MSG_STATE);
                 break;
         }
         return true;
@@ -103,8 +95,12 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
 
     @Override
     public boolean handleMessage(Message msg) {
-        if (mState == STATE_DOWN) {
-            showBlur();
+        switch (msg.what) {
+            case MSG_STATE:
+                if (mState == STATE_DOWN) {
+                    showBlur();
+                }
+                break;
         }
         return false;
     }
@@ -119,8 +115,10 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                mBlurImage.setVisibility(View.INVISIBLE);
+                mCenterImage.setVisibility(View.INVISIBLE);
                 mLiveImage.setVisibility(View.VISIBLE);
-                mFrameAnim.start();
+                mLiveImage.start(125);
             }
 
             @Override
@@ -129,6 +127,5 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
             }
         });
         mBlurImage.startAnimation(animation);
-
     }
 }
