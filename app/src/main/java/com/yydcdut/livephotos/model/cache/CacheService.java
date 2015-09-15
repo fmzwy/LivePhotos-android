@@ -11,6 +11,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.yydcdut.livephotos.IMake;
+import com.yydcdut.livephotos.model.GalleryDB;
 import com.yydcdut.livephotos.model.ICameraBinder;
 import com.yydcdut.livephotos.model.SandBoxDB;
 import com.yydcdut.livephotos.model.YuvService;
@@ -48,7 +49,10 @@ public class CacheService extends Service implements CacheQueue.OnDataCacheFinis
 
         @Override
         public void capture(long belong) {
-            mCacheQueue.wannaSaveData(belong);
+            if (mCacheQueue != null) {
+                mCacheQueue.wannaSaveData(belong);
+                GalleryDB.getInstance().save(belong);
+            }
         }
 
         @Override

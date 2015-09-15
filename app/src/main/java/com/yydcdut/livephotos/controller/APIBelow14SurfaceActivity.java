@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.view.View;
 
 import com.yydcdut.livephotos.R;
-import com.yydcdut.livephotos.model.GalleryDB;
 import com.yydcdut.livephotos.model.ICameraBinder;
 import com.yydcdut.livephotos.model.cache.CacheService;
 
@@ -91,7 +90,6 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
                 if (mCameraBinder != null) {
                     long belong = System.currentTimeMillis();
                     mCameraBinder.capture(belong);
-                    GalleryDB.getInstance().save(belong);
                 }
                 break;
             case R.id.btn_gallery:

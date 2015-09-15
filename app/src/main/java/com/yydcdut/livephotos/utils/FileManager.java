@@ -1,6 +1,7 @@
 package com.yydcdut.livephotos.utils;
 
 import android.os.Environment;
+import android.text.TextUtils;
 
 import java.io.File;
 
@@ -33,5 +34,13 @@ public class FileManager {
 
     public static String getAppDir() {
         return ROOT_PATH + File.separator + DIR_ROOT_NAME + File.separator;
+    }
+
+    public static String[] getNames(String dir) {
+        if (TextUtils.isEmpty(dir)) {
+            return null;
+        }
+        File file = new File(dir);
+        return file.list();
     }
 }

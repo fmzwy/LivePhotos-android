@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.yydcdut.livephotos.IMake;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
+import com.yydcdut.livephotos.utils.Blur;
 import com.yydcdut.livephotos.utils.FileManager;
 
 import java.io.BufferedOutputStream;
@@ -51,9 +52,14 @@ public class YuvService extends Service {
                 if (progress != null) {
                     long belong = progress.belong;
                     String path = progress.path;
+                    SandPhoto centerPhoto = SandBoxDB.getInstance().getCenterSandPhoto(belong);
+                    //todo oom
                     List<SandPhoto> sandPhotos = SandBoxDB.getInstance().find(belong);
                     for (SandPhoto sandPhoto : sandPhotos) {
                         makePhoto(sandPhoto, path);
+                        if (sandPhoto.time == centerPhoto.time) {
+                            doBlur(centerPhoto, path);
+                        }
                     }
                 } else {
                     synchronized (mMakeObject) {
@@ -76,7 +82,6 @@ public class YuvService extends Service {
         BufferedOutputStream bos = null;
         Matrix matrix = new Matrix();
         matrix.setRotate(90f);
-        Log.i("yuyidong", "makePhoto   begin");
         try {
             YuvImage yuvImage = new YuvImage(sandPhoto.data, ImageFormat.NV21, sandPhoto.width, sandPhoto.height, null);
             byteArrayOutputStream = new ByteArrayOutputStream();
@@ -86,13 +91,45 @@ public class YuvService extends Service {
             bos = new BufferedOutputStream(new FileOutputStream(file));
             newBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bos);// 将图片压缩到流中
             bos.flush();// 输出
-            Log.i("yuyidong", "makePhoto   file--->" + dir + sandPhoto.time + ".jpg");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Log.i("yuyidong", "makePhoto   FileNotFoundException");
         } catch (IOException e) {
             e.printStackTrace();
-            Log.i("yuyidong", "makePhoto   IOException");
+        } finally {
+            if (byteArrayOutputStream != null) {
+                try {
+                    byteArrayOutputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (bos != null) {
+                try {
+                    bos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.i("yuyidong", "makePhoto   end--->" + sandPhoto.getId());
+        }
+    }
+
+    private void doBlur(SandPhoto sandPhoto, String dir) {
+        File file = new File(dir + "blur.jpg");
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        BufferedOutputStream bos = null;
+        Matrix matrix = new Matrix();
+        matrix.setRotate(90f);
+        try {
+            Bitmap bitmap = BitmapFactory.decodeFile(dir + sandPhoto.time + ".jpg");
+            Bitmap blurBitmap = Blur.blur(bitmap);
+            bos = new BufferedOutputStream(new FileOutputStream(file));
+            blurBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bos);// 将图片压缩到流中
+            bos.flush();// 输出
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             if (byteArrayOutputStream != null) {
                 try {

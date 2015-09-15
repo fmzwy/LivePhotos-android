@@ -23,6 +23,9 @@
         <activity
             android:name=".controller.GalleryActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".controller.LivePhotoActivity"
+            android:screenOrientation="portrait"/>
 
         <service android:name=".model.cache.CacheService"/>
         <service android:name=".model.local.CameraService"/>

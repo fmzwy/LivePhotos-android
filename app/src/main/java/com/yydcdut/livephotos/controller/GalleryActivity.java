@@ -1,44 +1,54 @@
 package com.yydcdut.livephotos.controller;
 
-import android.graphics.ImageFormat;
-import android.graphics.YuvImage;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yydcdut.livephotos.R;
 import com.yydcdut.livephotos.model.GalleryDB;
 import com.yydcdut.livephotos.model.SandBoxDB;
 import com.yydcdut.livephotos.model.data.bean.GalleryPhoto;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
+import com.yydcdut.livephotos.utils.FileManager;
 
+import java.io.File;
 import java.util.List;
 
 /**
  * Created by yuyidong on 15/9/14.
  */
-public class GalleryActivity extends AppCompatActivity {
+public class GalleryActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+    private List<GalleryPhoto> mGalleryPhotoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gallery);
         GridView gridView = (GridView) findViewById(R.id.gv_gallery);
-        gridView.setAdapter(new GridAdapter());
+        mGalleryPhotoList = GalleryDB.getInstance().findAll();
+        gridView.setAdapter(mGridAdapter);
+        gridView.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Bundle bundle = new Bundle();
+        bundle.putLong("belong", mGalleryPhotoList.get(position).belong);
+        Intent intent = new Intent(this, LivePhotoActivity.class);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
 
-    class GridAdapter extends BaseAdapter {
-        private List<GalleryPhoto> mGalleryPhotoList;
-
-        public GridAdapter() {
-            mGalleryPhotoList = GalleryDB.getInstance().findAll();
-        }
+    private BaseAdapter mGridAdapter = new BaseAdapter() {
 
         @Override
         public int getCount() {
@@ -67,17 +77,13 @@ public class GalleryActivity extends AppCompatActivity {
             } else {
                 vh = (ViewHolder) convertView.getTag();
             }
-            //todo OOM
-            YuvImage yuvImage = new YuvImage(sandPhoto.data, ImageFormat.NV21, sandPhoto.width, sandPhoto.height, null);
-
-
-//            Bitmap bitmap = BitmapFactory.decodeByteArray(sandPhoto.data, 0, sandPhoto.data.length);
-//            vh.mImageView.setImageBitmap(bitmap);
+            String path = FileManager.getAppDir() + mGalleryPhotoList.get(position).belong + File.separator + sandPhoto.time + ".jpg";
+            ImageLoader.getInstance().displayImage("file:" + File.separator + File.separator + path, vh.mImageView);
             return convertView;
         }
 
         class ViewHolder {
             ImageView mImageView;
         }
-    }
+    };
 }
