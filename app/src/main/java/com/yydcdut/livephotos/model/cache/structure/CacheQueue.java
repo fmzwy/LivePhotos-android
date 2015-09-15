@@ -21,26 +21,18 @@ public class CacheQueue<T> {
     }
 
     public void add(T t) {
-        T data = null;
+        T data = t;
         if (mCacheList.size() < mMaxQueueSize) {
             mCacheList.add(t);
         } else {
-            data = mCacheList.remove(0);
+            mCacheList.remove(0);
             mCacheList.add(t);
         }
         if (mWannaSave && mSaveList == null) {
-            //当此队列还没满的时候拍照的话，初始化的List不进行数据copy
-            if (mCacheList.size() != mMaxQueueSize) {
-                mSaveList = new LinkedList<>();
-            } else {
-                mSaveList = new LinkedList<>(mCacheList);
-            }
+            mSaveList = new LinkedList<>(mCacheList);
         } else if (mWannaSave && mSaveList != null) {
-            //直到mSaveList存满才结束，如果mCacheList还没满的时候就要开始存的话，那么data为null，就先舍弃掉
             if (mSaveList.size() != mMaxQueueSize * 2 + 1) {
-                if (data != null) {
-                    mSaveList.add(data);
-                }
+                mSaveList.add(data);
             } else {
                 if (mOnDataCacheFinishListener != null) {
                     mOnDataCacheFinishListener.onFinish(mSaveList, mBelong);

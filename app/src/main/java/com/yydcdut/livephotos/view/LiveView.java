@@ -98,7 +98,7 @@ public class LiveView extends ImageView implements Handler.Callback, Runnable {
         while (mCurrent < mTotalFilesNumber) {
             mHandler.sendEmptyMessage(mCurrent++);
             try {
-                Thread.sleep(1000);
+                Thread.sleep(mFrames);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

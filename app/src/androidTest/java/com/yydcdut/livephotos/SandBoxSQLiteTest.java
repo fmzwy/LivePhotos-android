@@ -13,18 +13,6 @@ import java.util.List;
  */
 public class SandBoxSQLiteTest extends InstrumentationTestCase {
 
-    public void testEasyCamera() {
-        SandPhoto sandPhoto = new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, System.currentTimeMillis());
-        long id = SandBoxDB.getInstance().save(sandPhoto, 1);
-        Log.i("yuyidong", "id---->" + id);
-        List<SandPhoto> sandPhotoList = SandBoxDB.getInstance().findAll();
-        for (SandPhoto sandPhoto1 : sandPhotoList) {
-            Log.i("yuyidong", "easyPhoto--->" + sandPhoto1.toString());
-            int rows = SandBoxDB.getInstance().delete(sandPhoto1);
-            Log.i("yuyidong", "rows--->" + rows);
-        }
-    }
-
     public void testEasyCameraFindByTime() {
         Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 1000l), 1));
         Log.i("yuyidong", "id---->" + SandBoxDB.getInstance().save(new SandPhoto(-1, new byte[]{'a', 'b', 'c'}, 199, 200, 2000l), 1));

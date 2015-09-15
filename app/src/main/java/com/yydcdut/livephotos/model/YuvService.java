@@ -31,6 +31,8 @@ import java.util.Queue;
  * Created by yuyidong on 15/9/14.
  */
 public class YuvService extends Service {
+    private static final int MAX_YUV_NUMBER = 5;
+
     private boolean mGotoStop = false;
     private byte[] mMakeObject = new byte[1];
 
@@ -53,15 +55,17 @@ public class YuvService extends Service {
                     long belong = progress.belong;
                     String path = progress.path;
                     SandPhoto centerPhoto = SandBoxDB.getInstance().getCenterSandPhoto(belong);
-                    //todo oom
-                    List<SandPhoto> sandPhotos = SandBoxDB.getInstance().find(belong);
+                    //每个progress做5张图
+                    List<SandPhoto> sandPhotos = SandBoxDB.getInstance().find(belong, progress.from, MAX_YUV_NUMBER);
+                    Log.i("yuyidong", "MakePhotoRunnable  " + sandPhotos.size());
                     for (SandPhoto sandPhoto : sandPhotos) {
-                        Log.i("yuyidong", "sandPhotos.size()------>" + sandPhotos.size());
                         makePhoto(sandPhoto, path);
                         if (sandPhoto.time == centerPhoto.time) {
                             doBlur(centerPhoto, path);
                         }
                     }
+                    sandPhotos.clear();
+                    sandPhotos = null;
                 } else {
                     synchronized (mMakeObject) {
                         try {
@@ -70,7 +74,6 @@ public class YuvService extends Service {
                             e.printStackTrace();
                         }
                     }
-
                 }
 
             }
@@ -154,9 +157,14 @@ public class YuvService extends Service {
 
     IMake.Stub mStub = new IMake.Stub() {
         @Override
-        public void make(long time) throws RemoteException {
-            Progress progress = new Progress(initDir(time + ""), time);
-            mProgressQueue.offer(progress);
+        public void make(long belong) throws RemoteException {
+            int current = 0;
+            int total = SandBoxDB.getInstance().getCount(belong);
+            while (current < total) {
+                Progress progress = new Progress(initDir(belong + ""), belong, current);
+                mProgressQueue.offer(progress);
+                current = current + MAX_YUV_NUMBER > total ? total : current + MAX_YUV_NUMBER;
+            }
             //先拍一张照
             synchronized (mMakeObject) {
                 mMakeObject.notifyAll();
@@ -165,21 +173,23 @@ public class YuvService extends Service {
     };
 
     private String initDir(String dirName) {
-        String dirPath;
-        File dir;
-        dirPath = FileManager.getAppDir() + dirName + File.separator + "";
-        dir = new File(dirPath);
-        dir.mkdir();
+        String dirPath = FileManager.getAppDir() + dirName + File.separator + "";
+        File dir = new File(dirPath);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
         return dirPath;
     }
 
     private class Progress {
         final String path;
         final long belong;
+        final int from;
 
-        public Progress(String path, long belong) {
+        public Progress(String path, long belong, int from) {
             this.path = path;
             this.belong = belong;
+            this.from = from;
         }
     }
 

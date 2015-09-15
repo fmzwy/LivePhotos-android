@@ -11,5 +11,5 @@ interface IMake {
 //    void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,
 //            double aDouble, String aString);
 
-    void make(long time);
+    void make(long belong);
 }

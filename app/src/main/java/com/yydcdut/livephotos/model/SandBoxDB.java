@@ -25,15 +25,17 @@ public class SandBoxDB extends BaseSQLite {
         return sInstance;
     }
 
-
     /**
      * 查询
      *
      * @return
      */
-    public List<SandPhoto> findAll() {
+    public List<SandPhoto> find(long belong) {
         SQLiteDatabase db = mPhotoSQLite.getReadableDatabase();
-        Cursor cursor = db.query(PhotoSQLite.TABLE_SANDBOX, null, null, null, null, null, null);
+        Cursor cursor = db.query(PhotoSQLite.TABLE_SANDBOX, null,
+                "belong = ? ",
+                new String[]{belong + ""},
+                null, null, null);
         List<SandPhoto> sandPhotoList = new ArrayList<>(cursor.getCount());
         while (cursor.moveToNext()) {
             long id = cursor.getLong(cursor.getColumnIndex("_id"));
@@ -49,17 +51,13 @@ public class SandBoxDB extends BaseSQLite {
         return sandPhotoList;
     }
 
-    /**
-     * 查询
-     *
-     * @return
-     */
-    public List<SandPhoto> find(long belong) {
+    public List<SandPhoto> find(long belong, int from, int to) {
         SQLiteDatabase db = mPhotoSQLite.getReadableDatabase();
         Cursor cursor = db.query(PhotoSQLite.TABLE_SANDBOX, null,
                 "belong = ? ",
                 new String[]{belong + ""},
-                null, null, null);
+                null, null, null,
+                from + "," + to);
         List<SandPhoto> sandPhotoList = new ArrayList<>(cursor.getCount());
         while (cursor.moveToNext()) {
             long id = cursor.getLong(cursor.getColumnIndex("_id"));
@@ -145,6 +143,18 @@ public class SandBoxDB extends BaseSQLite {
         }
         db.close();
         return sandPhoto;
+    }
+
+    public int getCount(long belong) {
+        SQLiteDatabase db = mPhotoSQLite.getReadableDatabase();
+        Cursor cursor = db.query(PhotoSQLite.TABLE_SANDBOX, new String[]{"count(*)"}, "belong = ?", new String[]{belong + ""}, null, null, null);
+        int count = -1;
+        while (cursor.moveToNext()) {
+            count = cursor.getInt(cursor.getColumnIndex("count(*)"));
+        }
+        cursor.close();
+        db.close();
+        return count;
     }
 
 }
