@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.yydcdut.livephotos.utils.FileManager;
@@ -57,7 +56,6 @@ public class LiveView extends ImageView implements Handler.Callback, Runnable {
 
     private void doShow(int number) throws ExecutionException, InterruptedException {
         setImageBitmap(mBitmaps[number % 5]);
-        Log.i("yuyidong", "mBitmaps  mBitmaps" + (number % 5) + "--->" + mBitmaps[number % 5].toString());
         if (mOptionses[number % 5] == null) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inBitmap = mBitmaps[number % 5];
@@ -83,7 +81,6 @@ public class LiveView extends ImageView implements Handler.Callback, Runnable {
     @Override
     public boolean handleMessage(Message msg) {
         try {
-            Log.i("yuyidong", "msg.what--->" + msg.what);
             doShow(msg.what);
         } catch (ExecutionException e) {
             e.printStackTrace();
@@ -102,6 +99,15 @@ public class LiveView extends ImageView implements Handler.Callback, Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+
+        if (mOnLiveFinishedListener != null) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mOnLiveFinishedListener.onFinish();
+                }
+            });
         }
     }
 
@@ -130,5 +136,15 @@ public class LiveView extends ImageView implements Handler.Callback, Runnable {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         mPool.shutdown();
+    }
+
+    private OnLiveFinishedListener mOnLiveFinishedListener;
+
+    public interface OnLiveFinishedListener {
+        void onFinish();
+    }
+
+    public void setOnLiveFinishedListener(OnLiveFinishedListener onLiveFinishedListener) {
+        mOnLiveFinishedListener = onLiveFinishedListener;
     }
 }

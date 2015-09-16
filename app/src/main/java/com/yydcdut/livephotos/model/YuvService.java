@@ -151,7 +151,7 @@ public class YuvService extends Service {
                     e.printStackTrace();
                 }
             }
-            Log.i("yuyidong", "makePhoto   end");
+            Log.i("yuyidong", "makePhoto  blur   end");
         }
     }
 

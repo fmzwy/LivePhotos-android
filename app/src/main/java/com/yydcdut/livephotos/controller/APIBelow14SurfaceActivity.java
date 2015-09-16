@@ -13,6 +13,7 @@ import android.view.View;
 import com.yydcdut.livephotos.R;
 import com.yydcdut.livephotos.model.ICameraBinder;
 import com.yydcdut.livephotos.model.cache.CacheService;
+import com.yydcdut.livephotos.view.LoadingLayout;
 
 /**
  * Created by yuyidong on 15/9/11.
@@ -21,6 +22,7 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
     private ICameraBinder mCameraBinder;
     private boolean mIsBind = false;
     private Camera.Size mPreviewSize;
+    private LoadingLayout mLoadingLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +30,7 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
         findViewById(R.id.fab_capture).setOnClickListener(this);
         findViewById(R.id.btn_gallery).setOnClickListener(this);
         findViewById(R.id.btn_setting).setOnClickListener(this);
+        mLoadingLayout = (LoadingLayout) findViewById(R.id.layout_loading);
         if (!mIsBind) {
             Intent intent = new Intent(this, CacheService.class);
             bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
@@ -62,6 +65,11 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
+        if (mCurrentFrameNumber == 0) {
+            mLoadingLayout.setVisibility(View.VISIBLE);
+        } else if (mCurrentFrameNumber == 10) {
+            mLoadingLayout.setVisibility(View.GONE);
+        }
         //初始化数据
         if (!mIsInit) {
             mAfterTime = System.currentTimeMillis();

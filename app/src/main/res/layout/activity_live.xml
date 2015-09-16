@@ -24,4 +24,11 @@
         android:scaleType="center"
         android:visibility="invisible"/>
 
+    <com.yydcdut.livephotos.view.LoadingLayout
+        android:id="@+id/layout_loading"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone">
+    </com.yydcdut.livephotos.view.LoadingLayout>
+
 </RelativeLayout>

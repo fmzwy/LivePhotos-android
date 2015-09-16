@@ -16,6 +16,7 @@ import com.yydcdut.livephotos.model.SandBoxDB;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
 import com.yydcdut.livephotos.utils.FileManager;
 import com.yydcdut.livephotos.view.LiveView;
+import com.yydcdut.livephotos.view.LoadingLayout;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -23,7 +24,8 @@ import java.util.concurrent.ExecutionException;
 /**
  * Created by yuyidong on 15/9/14.
  */
-public class LivePhotoActivity extends AppCompatActivity implements View.OnTouchListener, Handler.Callback {
+public class LivePhotoActivity extends AppCompatActivity implements View.OnTouchListener, Handler.Callback,
+        LiveView.OnLiveFinishedListener, Animation.AnimationListener {
     private static final int STATE_DOWN = 1;
     private static final int STATE_UP = 2;
     private static final int STATE_OTHER = 3;
@@ -34,6 +36,7 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
     private ImageView mCenterImage;
     private ImageView mBlurImage;
     private LiveView mLiveImage;
+    private LoadingLayout mLoadingLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,8 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
         long belong = bundle.getLong("belong");
         setContentView(R.layout.activity_live);
         mHandler = new Handler(this);
+        mLoadingLayout = (LoadingLayout) findViewById(R.id.layout_loading);
+        mLoadingLayout.setVisibility(View.VISIBLE);
         mCenterImage = (ImageView) findViewById(R.id.img_center);
         mCenterImage.setOnTouchListener(this);
         mBlurImage = (ImageView) findViewById(R.id.img_blur);
@@ -57,6 +62,7 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        mLoadingLayout.setVisibility(View.GONE);
     }
 
     private void initCenter(String dir, long belong) {
@@ -72,6 +78,7 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
 
     private void initLive(String dir) throws ExecutionException, InterruptedException {
         mLiveImage.init(dir);
+        mLiveImage.setOnLiveFinishedListener(this);
     }
 
 
@@ -105,27 +112,68 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
         return false;
     }
 
+    private int mVisible = VISIBLE_NOTHING;
+    private static final int VISIBLE_NOTHING = 0;
+    private static final int VISIBLE_SHOW_BLUR = 1;
+    private static final int VISIBLE_HIDE_BLUR = 2;
+    private static final int VISIBLE_SHOW_LIVE = 3;
+    private static final int VISIBLE_HIDE_LIVE = 4;
+
+
     private void showBlur() {
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_in);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
+        Animation animationBlur = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_in_blur);
+        mVisible = VISIBLE_SHOW_BLUR;
+        animationBlur.setAnimationListener(this);
+        mBlurImage.startAnimation(animationBlur);
+    }
+
+    @Override
+    public void onFinish() {
+        Animation animationLive = AnimationUtils.loadAnimation(LivePhotoActivity.this, R.anim.anim_alpha_out_live);
+        mVisible = VISIBLE_HIDE_LIVE;
+        animationLive.setAnimationListener(this);
+        mLiveImage.startAnimation(animationLive);
+    }
+
+    @Override
+    public void onAnimationStart(Animation animation) {
+        switch (mVisible) {
+            case VISIBLE_SHOW_BLUR:
                 mBlurImage.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mBlurImage.setVisibility(View.INVISIBLE);
-                mCenterImage.setVisibility(View.INVISIBLE);
+                break;
+            case VISIBLE_SHOW_LIVE:
                 mLiveImage.setVisibility(View.VISIBLE);
-                mLiveImage.start(125);
-            }
+                break;
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
+        }
+    }
 
-            }
-        });
-        mBlurImage.startAnimation(animation);
+    @Override
+    public void onAnimationEnd(Animation animation) {
+        switch (mVisible) {
+            case VISIBLE_SHOW_BLUR:
+                Animation animationLive = AnimationUtils.loadAnimation(LivePhotoActivity.this, R.anim.anim_alpha_in_live);
+                mVisible = VISIBLE_SHOW_LIVE;
+                animationLive.setAnimationListener(this);
+                mLiveImage.startAnimation(animationLive);
+                break;
+            case VISIBLE_SHOW_LIVE:
+                mLiveImage.start(80);
+                break;
+            case VISIBLE_HIDE_LIVE:
+                mLiveImage.setVisibility(View.GONE);
+                Animation animationBlur = AnimationUtils.loadAnimation(LivePhotoActivity.this, R.anim.anim_alpha_out_live);
+                mVisible = VISIBLE_HIDE_BLUR;
+                animationBlur.setAnimationListener(this);
+                mBlurImage.startAnimation(animationBlur);
+                break;
+            case VISIBLE_HIDE_BLUR:
+                mBlurImage.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    @Override
+    public void onAnimationRepeat(Animation animation) {
     }
 }

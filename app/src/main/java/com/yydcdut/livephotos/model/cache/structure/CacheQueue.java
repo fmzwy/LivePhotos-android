@@ -31,6 +31,7 @@ public class CacheQueue<T> {
         if (mWannaSave && mSaveList == null) {
             mSaveList = new LinkedList<>(mCacheList);
         } else if (mWannaSave && mSaveList != null) {
+            //todo 这里可能会超级大，会OOM
             if (mSaveList.size() != mMaxQueueSize * 2 + 1) {
                 mSaveList.add(data);
             } else {
