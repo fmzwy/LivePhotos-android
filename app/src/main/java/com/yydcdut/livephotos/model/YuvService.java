@@ -14,7 +14,9 @@ import android.util.Log;
 
 import com.yydcdut.livephotos.IMake;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
+import com.yydcdut.livephotos.model.data.db.SandBoxDB;
 import com.yydcdut.livephotos.utils.Blur;
+import com.yydcdut.livephotos.utils.Const;
 import com.yydcdut.livephotos.utils.FileManager;
 
 import java.io.BufferedOutputStream;
@@ -67,6 +69,7 @@ public class YuvService extends Service {
                     sandPhotos.clear();
                     sandPhotos = null;
                 } else {
+                    sendBroadcast(new Intent(Const.ACTION));
                     synchronized (mMakeObject) {
                         try {
                             mMakeObject.wait();

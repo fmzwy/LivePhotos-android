@@ -11,12 +11,12 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.yydcdut.livephotos.IMake;
-import com.yydcdut.livephotos.model.GalleryDB;
 import com.yydcdut.livephotos.model.ICameraBinder;
-import com.yydcdut.livephotos.model.SandBoxDB;
 import com.yydcdut.livephotos.model.YuvService;
 import com.yydcdut.livephotos.model.cache.structure.CacheQueue;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
+import com.yydcdut.livephotos.model.data.db.GalleryDB;
+import com.yydcdut.livephotos.model.data.db.SandBoxDB;
 
 import java.util.List;
 

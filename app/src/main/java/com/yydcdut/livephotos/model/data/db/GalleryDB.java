@@ -1,4 +1,4 @@
-package com.yydcdut.livephotos.model;
+package com.yydcdut.livephotos.model.data.db;
 
 import android.content.ContentValues;
 import android.database.Cursor;

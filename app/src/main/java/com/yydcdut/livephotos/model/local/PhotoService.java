@@ -11,8 +11,8 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.yydcdut.livephotos.IMake;
-import com.yydcdut.livephotos.model.SandBoxDB;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
+import com.yydcdut.livephotos.model.data.db.SandBoxDB;
 import com.yydcdut.livephotos.utils.FileManager;
 
 import java.io.File;

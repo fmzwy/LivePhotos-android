@@ -1,8 +1,10 @@
 package com.yydcdut.livephotos.controller;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
@@ -13,6 +15,7 @@ import android.view.View;
 import com.yydcdut.livephotos.R;
 import com.yydcdut.livephotos.model.ICameraBinder;
 import com.yydcdut.livephotos.model.cache.CacheService;
+import com.yydcdut.livephotos.utils.Const;
 import com.yydcdut.livephotos.view.LoadingLayout;
 
 /**
@@ -23,18 +26,23 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
     private boolean mIsBind = false;
     private Camera.Size mPreviewSize;
     private LoadingLayout mLoadingLayout;
+    private LoadingLayout mGalleryLoading;
+    private View mGalleryView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         findViewById(R.id.fab_capture).setOnClickListener(this);
-        findViewById(R.id.btn_gallery).setOnClickListener(this);
+        mGalleryView = findViewById(R.id.btn_gallery);
+        mGalleryView.setOnClickListener(this);
         findViewById(R.id.btn_setting).setOnClickListener(this);
         mLoadingLayout = (LoadingLayout) findViewById(R.id.layout_loading);
+        mGalleryLoading = (LoadingLayout) findViewById(R.id.img_gallery_loading);
         if (!mIsBind) {
             Intent intent = new Intent(this, CacheService.class);
             bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
         }
+        register();
     }
 
     @Override
@@ -98,6 +106,8 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
                 if (mCameraBinder != null) {
                     long belong = System.currentTimeMillis();
                     mCameraBinder.capture(belong);
+                    mGalleryView.setVisibility(View.GONE);
+                    mGalleryLoading.setVisibility(View.VISIBLE);
                 }
                 break;
             case R.id.btn_gallery:
@@ -115,6 +125,28 @@ public class APIBelow14SurfaceActivity extends CameraSurfaceActivity implements 
         if (mIsBind) {
             unbindService(mServiceConnection);
             mIsBind = false;
+        }
+        unRegister();
+    }
+
+    private void register() {
+        mFinishBoardCast = new FinishBoardCast();
+        IntentFilter intentFilter = new IntentFilter(Const.ACTION);
+        registerReceiver(mFinishBoardCast, intentFilter);
+    }
+
+    private void unRegister() {
+        unregisterReceiver(mFinishBoardCast);
+    }
+
+    private BroadcastReceiver mFinishBoardCast;
+
+    class FinishBoardCast extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mGalleryLoading.setVisibility(View.GONE);
+            mGalleryView.setVisibility(View.VISIBLE);
         }
     }
 

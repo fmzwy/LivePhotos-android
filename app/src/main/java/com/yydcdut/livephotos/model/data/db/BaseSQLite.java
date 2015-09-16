@@ -1,4 +1,4 @@
-package com.yydcdut.livephotos.model;
+package com.yydcdut.livephotos.model.data.db;
 
 import com.yydcdut.livephotos.LiveApplication;
 import com.yydcdut.livephotos.model.data.PhotoSQLite;

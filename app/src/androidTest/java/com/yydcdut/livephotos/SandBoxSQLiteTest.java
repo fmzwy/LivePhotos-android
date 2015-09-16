@@ -3,8 +3,8 @@ package com.yydcdut.livephotos;
 import android.test.InstrumentationTestCase;
 import android.util.Log;
 
-import com.yydcdut.livephotos.model.SandBoxDB;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
+import com.yydcdut.livephotos.model.data.db.SandBoxDB;
 
 import java.util.List;
 

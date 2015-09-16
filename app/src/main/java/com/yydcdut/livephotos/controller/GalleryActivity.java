@@ -13,10 +13,10 @@ import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.yydcdut.livephotos.R;
-import com.yydcdut.livephotos.model.GalleryDB;
-import com.yydcdut.livephotos.model.SandBoxDB;
 import com.yydcdut.livephotos.model.data.bean.GalleryPhoto;
 import com.yydcdut.livephotos.model.data.bean.SandPhoto;
+import com.yydcdut.livephotos.model.data.db.GalleryDB;
+import com.yydcdut.livephotos.model.data.db.SandBoxDB;
 import com.yydcdut.livephotos.utils.FileManager;
 
 import java.io.File;
