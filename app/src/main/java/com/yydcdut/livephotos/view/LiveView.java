@@ -10,6 +10,8 @@ import android.widget.ImageView;
 
 import com.yydcdut.livephotos.utils.FileManager;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -66,9 +68,25 @@ public class LiveView extends ImageView implements Handler.Callback, Runnable {
         mBitmaps[number % 5] = mPool.submit(new BitmapCallable(mOptionses[number % 5], mDir + mFiles[number])).get();
     }
 
-    public void init(String dir) throws ExecutionException, InterruptedException {
+    public void reset() throws ExecutionException, InterruptedException {
+        for (int i = 0; i < 5; i++) {
+            mBitmaps[i] = mPool.submit(new BitmapCallable(mOptionses[i], mDir + mFiles[i])).get();
+        }
+        setImageBitmap(mBitmaps[0]);
+        mCurrent = 0;
+    }
+
+    public void init(String dir, OnLiveInitFinishedListener listener) throws ExecutionException, InterruptedException {
         mDir = dir;
         mFiles = FileManager.getNames(dir);
+        Arrays.sort(mFiles, new Comparator<String>() {
+            @Override
+            public int compare(String lhs, String rhs) {
+                long l = Long.parseLong(lhs.substring(0, lhs.length() - 4));
+                long r = Long.parseLong(rhs.substring(0, lhs.length() - 4));
+                return ((int) (l - r));
+            }
+        });
         mTotalFilesNumber = mFiles.length;
         mBitmaps[0] = mPool.submit(new BitmapCallable(null, dir + mFiles[0])).get();
         setImageBitmap(mBitmaps[0]);
@@ -76,6 +94,9 @@ public class LiveView extends ImageView implements Handler.Callback, Runnable {
         mBitmaps[2] = mPool.submit(new BitmapCallable(null, dir + mFiles[2])).get();
         mBitmaps[3] = mPool.submit(new BitmapCallable(null, dir + mFiles[3])).get();
         mBitmaps[4] = mPool.submit(new BitmapCallable(null, dir + mFiles[4])).get();
+        if (listener != null) {
+            listener.onInitFinished();
+        }
     }
 
     @Override
@@ -146,5 +167,9 @@ public class LiveView extends ImageView implements Handler.Callback, Runnable {
 
     public void setOnLiveFinishedListener(OnLiveFinishedListener onLiveFinishedListener) {
         mOnLiveFinishedListener = onLiveFinishedListener;
+    }
+
+    public interface OnLiveInitFinishedListener {
+        void onInitFinished();
     }
 }

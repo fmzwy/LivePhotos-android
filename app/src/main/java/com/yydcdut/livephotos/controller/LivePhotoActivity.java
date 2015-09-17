@@ -62,7 +62,6 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        mLoadingLayout.setVisibility(View.GONE);
     }
 
     private void initCenter(String dir, long belong) {
@@ -77,7 +76,12 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
     }
 
     private void initLive(String dir) throws ExecutionException, InterruptedException {
-        mLiveImage.init(dir);
+        mLiveImage.init(dir, new LiveView.OnLiveInitFinishedListener() {
+            @Override
+            public void onInitFinished() {
+                mLoadingLayout.setVisibility(View.GONE);
+            }
+        });
         mLiveImage.setOnLiveFinishedListener(this);
     }
 
@@ -166,6 +170,13 @@ public class LivePhotoActivity extends AppCompatActivity implements View.OnTouch
                 mVisible = VISIBLE_HIDE_BLUR;
                 animationBlur.setAnimationListener(this);
                 mBlurImage.startAnimation(animationBlur);
+                try {
+                    mLiveImage.reset();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 break;
             case VISIBLE_HIDE_BLUR:
                 mBlurImage.setVisibility(View.GONE);
