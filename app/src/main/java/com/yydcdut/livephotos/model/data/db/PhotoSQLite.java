@@ -1,4 +1,4 @@
-package com.yydcdut.livephotos.model.data;
+package com.yydcdut.livephotos.model.data.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
